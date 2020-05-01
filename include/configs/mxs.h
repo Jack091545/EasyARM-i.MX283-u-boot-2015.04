@@ -122,7 +122,6 @@
  * Conflicts with AUART driver which can be set by board.
  * 和AUART冲突，重写了debug uart驱动
  */
-
 #ifndef CONFIG_MXS_AUART
 #define CONFIG_MX28_UARTDBG_SERIAL
 #define CONFIG_MX28_UARTDBG_CLOCK 24000000	/* 24M */

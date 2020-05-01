@@ -156,6 +156,9 @@ serial_initfunc(sconsole_serial_initialize);
 serial_initfunc(sh_serial_initialize);
 serial_initfunc(uartlite_serial_initialize);
 serial_initfunc(zynq_serial_initialize);
+serial_initfunc(mx28dbg_serial_initialize);
+
+
 
 /**
  * serial_register() - Register serial driver with serial driver core
@@ -252,6 +255,7 @@ void serial_initialize(void)
 	uartlite_serial_initialize();
 	zynq_serial_initialize();
 	mxs_auart_initialize();
+	mx28dbg_serial_initialize();
 
 	serial_assign(default_serial_console()->name);
 
