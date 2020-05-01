@@ -16,10 +16,6 @@
 #include <linux/compiler.h>
 
 
-
-
-
-
 DECLARE_GLOBAL_DATA_PTR;
 
 
@@ -35,6 +31,9 @@ DECLARE_GLOBAL_DATA_PTR;
 #define BM_UARTDBGFR_TXFF		(0x00000020)
 #define HW_UARTDBGDR			(0x00000000)
 #define BM_UARTDBGFR_RXFE		(0x00000010)
+#define BM_UARTDBG_TXE			(0x00000100)
+#define BM_UARTDBG_RXE			(0x00000200)
+#define BM_UARTDBGCR_UARTEN		(0x00000001)
 
 
 
@@ -54,7 +53,7 @@ DECLARE_GLOBAL_DATA_PTR;
 		((*(volatile unsigned int *)((base) + (reg  ## _TOG))) = (value))
 
 
-
+/* 设置一些串口参数 */
 void mx28_dbg_uart_setbrg(void)
 {
 	u32 cr;
@@ -73,13 +72,21 @@ void mx28_dbg_uart_setbrg(void)
 	REG_WR(REGS_UARTDBG_BASE, HW_UARTDBGCR, cr);
 }
 
-
+/* 初始化串口 */
 int mx28_dbg_uart_init(void)
 {
+	/* 重新设置一下IO引脚? 这里可以设置也可以不设置
+		因为在mx28evk.c里面已经设置过了 
+	*/
+	
 	REG_WR(REGS_UARTDBG_BASE, HW_UARTDBGCR, 0);
 	REG_WR(REGS_UARTDBG_BASE, HW_UARTDBGIMSC, 0);
 
 	mx28_dbg_uart_setbrg();
+
+	REG_WR(REGS_UARTDBG_BASE, HW_UARTDBGCR, \
+		BM_UARTDBG_TXE | BM_UARTDBG_RXE |BM_UARTDBGCR_UARTEN);
+	
 	return 0;
 }
 
@@ -125,6 +132,7 @@ static struct serial_device mx28dbg_serial_drv = {
 
 void mx28dbg_serial_initialize(void)
 {
+	/* 注册一个串口设备 */
 	serial_register(&mx28dbg_serial_drv);
 }
 

@@ -69,8 +69,13 @@ int board_early_init_f(void)
 		MX28_PAD_GPMI_RESETN__GPMI_RESETN  | MXS_PAD_4MA | MXS_PAD_3V3 | MXS_PAD_NOPULL
 	};
 	mxs_iomux_setup_multiple_pads(gpmi_pins, ARRAY_SIZE(gpmi_pins));
-	
 
+
+	/* 设置Debug串口的引脚 */
+	mxs_iomux_setup_pad(MX28_PAD_AUART0_CTS__DUART_RX | MXS_PAD_4MA | MXS_PAD_3V3 | MXS_PAD_PULLUP);
+	mxs_iomux_setup_pad(MX28_PAD_AUART0_RTS__DUART_TX | MXS_PAD_4MA | MXS_PAD_3V3 | MXS_PAD_NOPULL);
+	mxs_iomux_setup_pad(MX28_PAD_PWM0__I2C1_SCL | MXS_PAD_4MA | MXS_PAD_3V3 | MXS_PAD_PULLUP);
+	mxs_iomux_setup_pad(MX28_PAD_PWM1__I2C1_SDA | MXS_PAD_4MA | MXS_PAD_3V3 | MXS_PAD_NOPULL);
 	return 0;
 }
 
