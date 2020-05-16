@@ -546,6 +546,8 @@ int fdtdec_get_chosen_node(const void *blob, const char *name)
 
 int fdtdec_check_fdt(void)
 {
+	printf("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/*
 	 * We must have an FDT, but we cannot panic() yet since the console
 	 * is not ready. So for now, just assert(). Boards which need an early
@@ -563,6 +565,8 @@ int fdtdec_check_fdt(void)
  */
 int fdtdec_prepare_fdt(void)
 {
+	printf("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	if (!gd->fdt_blob || ((uintptr_t)gd->fdt_blob & 3) ||
 	    fdt_check_header(gd->fdt_blob)) {
 		printf("No valid FDT found - please append one to U-Boot "

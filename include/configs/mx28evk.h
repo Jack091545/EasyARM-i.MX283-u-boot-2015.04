@@ -33,8 +33,10 @@
 #define CONFIG_CMD_PING
 #define CONFIG_CMD_SAVEENV
 #define CONFIG_CMD_SETEXPR
-#define CONFIG_CMD_SF
-#define CONFIG_CMD_SPI
+#if 0
+//#define CONFIG_CMD_SF
+//#define CONFIG_CMD_SPI
+#endif
 #define CONFIG_CMD_USB
 #define CONFIG_CMD_BOOTZ
 #define CONFIG_CMD_NAND
@@ -125,25 +127,6 @@
 #define	CONFIG_USB_ETHER_ASIX
 #define	CONFIG_USB_ETHER_SMSC95XX
 #endif
-
-/* SPI */
-#ifdef CONFIG_CMD_SPI
-#define CONFIG_DEFAULT_SPI_BUS		2
-#define CONFIG_DEFAULT_SPI_MODE		SPI_MODE_0
-
-/* SPI Flash */
-#ifdef CONFIG_CMD_SF
-#define CONFIG_SPI_FLASH
-#define CONFIG_SF_DEFAULT_BUS		2
-#define CONFIG_SF_DEFAULT_CS		0
-/* this may vary and depends on the installed chip */
-#define CONFIG_SPI_FLASH_SST
-#define CONFIG_SF_DEFAULT_MODE		SPI_MODE_0
-#define CONFIG_SF_DEFAULT_SPEED		24000000
-#endif
-
-#endif
-
 
 
 /* Boot Linux */

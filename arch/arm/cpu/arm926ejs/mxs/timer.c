@@ -155,7 +155,11 @@ void __udelay(unsigned long usec)
 	}
 }
 
+
+
+
 ulong get_tbclk(void)
 {
 	return MXS_INCREMENTER_HZ;
 }
+

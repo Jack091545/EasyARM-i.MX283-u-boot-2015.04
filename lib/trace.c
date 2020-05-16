@@ -333,6 +333,8 @@ int __attribute__((no_instrument_function)) trace_init(void *buff,
 #ifdef CONFIG_TRACE_EARLY
 int __attribute__((no_instrument_function)) trace_early_init(void)
 {
+	printf("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	ulong func_count = gd->mon_len / FUNC_SITE_SIZE;
 	size_t buff_size = CONFIG_TRACE_EARLY_SIZE;
 	size_t needed;

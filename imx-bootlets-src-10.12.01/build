@@ -1,4 +1,6 @@
 #!/bin/bash
 
+
+
 export PATH=$PATH:/opt/gcc-4.4.4-glibc-2.11.1-multilib-1.0/arm-fsl-linux-gnueabi/bin
-make CROSS_COMPILE=arm-fsl-linux-gnueabi- BOARD=iMX28_EVK
+make -s CROSS_COMPILE=arm-fsl-linux-gnueabi- BOARD=iMX28_EVK

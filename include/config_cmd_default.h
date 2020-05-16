@@ -22,7 +22,9 @@
 #define CONFIG_CMD_ECHO		/* echo arguments		*/
 #define CONFIG_CMD_EDITENV	/* editenv			*/
 #define CONFIG_CMD_ENV_EXISTS	/* query whether env variables exists */
+#if 0
 #define CONFIG_CMD_FPGA		/* FPGA configuration Support	*/
+#endif
 #define CONFIG_CMD_IMI		/* iminfo			*/
 #define CONFIG_CMD_ITEST	/* Integer (and string) test	*/
 #ifndef CONFIG_SYS_NO_FLASH

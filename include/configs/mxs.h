@@ -30,12 +30,8 @@
 #endif
 
 #include <asm/arch/regs-base.h>
-
-#if defined(CONFIG_MX23)
-#include <asm/arch/iomux-mx23.h>
-#elif defined(CONFIG_MX28)
 #include <asm/arch/iomux-mx28.h>
-#endif
+
 
 /*
  * CPU specifics
@@ -143,15 +139,6 @@
 #endif
 #endif
 
-/* I2C */
-#ifdef CONFIG_CMD_I2C
-#define CONFIG_SYS_I2C
-#define CONFIG_SYS_I2C_MXS
-#define CONFIG_HARD_I2C
-#ifndef CONFIG_SYS_I2C_SPEED
-#define CONFIG_SYS_I2C_SPEED		400000
-#endif
-#endif
 
 /* LCD */
 #ifdef CONFIG_VIDEO
@@ -183,12 +170,6 @@
 #define CONFIG_MXS_OCOTP
 #endif
 
-/* SPI */
-#ifdef CONFIG_CMD_SPI
-#define CONFIG_HARD_SPI
-#define CONFIG_MXS_SPI
-#define CONFIG_SPI_HALF_DUPLEX
-#endif
 
 /* USB */
 #ifdef CONFIG_CMD_USB

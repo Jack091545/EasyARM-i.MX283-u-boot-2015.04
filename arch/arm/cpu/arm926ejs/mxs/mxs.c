@@ -100,6 +100,8 @@ int arch_misc_init(void)
 
 int arch_cpu_init(void)
 {
+	printf("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	struct mxs_clkctrl_regs *clkctrl_regs =
 		(struct mxs_clkctrl_regs *)MXS_CLKCTRL_BASE;
 	extern uint32_t _start;

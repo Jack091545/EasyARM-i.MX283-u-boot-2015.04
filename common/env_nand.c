@@ -64,6 +64,8 @@ DECLARE_GLOBAL_DATA_PTR;
  */
 int env_init(void)
 {
+	printf("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 #if defined(ENV_IS_EMBEDDED) || defined(CONFIG_NAND_ENV_DST)
 	int crc1_ok = 0, crc2_ok = 0;
 	env_t *tmp_env1;

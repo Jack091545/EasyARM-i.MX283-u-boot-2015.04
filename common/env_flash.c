@@ -60,6 +60,7 @@ static ulong end_addr_new = CONFIG_ENV_ADDR_REDUND + CONFIG_ENV_SECT_SIZE - 1;
 #ifdef CONFIG_ENV_ADDR_REDUND
 int env_init(void)
 {
+
 	int crc1_ok = 0, crc2_ok = 0;
 
 	uchar flag1 = flash_addr->flags;
