@@ -32,25 +32,9 @@ typedef struct global_data {
 	/* We cannot bracket this with CONFIG_PCI due to mpc5xxx */
 	unsigned long pci_clk;
 	unsigned long mem_clk;
-#if defined(CONFIG_LCD) || defined(CONFIG_VIDEO)
-	unsigned long fb_base;	/* Base address of framebuffer mem */
-#endif
-#if defined(CONFIG_POST) || defined(CONFIG_LOGBUFFER)
-	unsigned long post_log_word;  /* Record POST activities */
-	unsigned long post_log_res; /* success of POST test */
-	unsigned long post_init_f_time;  /* When post_init_f started */
-#endif
-#ifdef CONFIG_BOARD_TYPES
 	unsigned long board_type;
-#endif
 	unsigned long have_console;	/* serial_init() was called */
-#ifdef CONFIG_PRE_CONSOLE_BUFFER
 	unsigned long precon_buf_idx;	/* Pre-Console buffer index */
-#endif
-#ifdef CONFIG_MODEM_SUPPORT
-	unsigned long do_mdm_init;
-	unsigned long be_quiet;
-#endif
 	unsigned long env_addr;	/* Address  of Environment struct */
 	unsigned long env_valid;	/* Checksum of Environment valid? */
 
@@ -64,39 +48,13 @@ typedef struct global_data {
 	unsigned long reloc_off;
 	struct global_data *new_gd;	/* relocated global data */
 
-#ifdef CONFIG_DM
-	struct udevice	*dm_root;	/* Root instance for Driver Model */
-	struct udevice	*dm_root_f;	/* Pre-relocation root instance */
-	struct list_head uclass_root;	/* Head of core tree */
-#endif
-
 	const void *fdt_blob;	/* Our device tree, NULL if none */
 	void *new_fdt;		/* Relocated FDT */
 	unsigned long fdt_size;	/* Space reserved for relocated FDT */
 	struct jt_funcs *jt;		/* jump table */
 	char env_buf[32];	/* buffer for getenv() before reloc. */
-#ifdef CONFIG_TRACE
-	void		*trace_buff;	/* The trace buffer */
-#endif
-#if defined(CONFIG_SYS_I2C)
-	int		cur_i2c_bus;	/* current used i2c bus */
-#endif
-#ifdef CONFIG_SYS_I2C_MXC
-	void *srdata[10];
-#endif
 	unsigned long timebase_h;
 	unsigned long timebase_l;
-#ifdef CONFIG_SYS_MALLOC_F_LEN
-	unsigned long malloc_base;	/* base address of early malloc() */
-	unsigned long malloc_limit;	/* limit address */
-	unsigned long malloc_ptr;	/* current address */
-#endif
-#ifdef CONFIG_PCI
-	struct pci_controller *hose;	/* PCI hose for early use */
-#endif
-#ifdef CONFIG_PCI_BOOTDELAY
-	int pcidelay_done;
-#endif
 	struct udevice *cur_serial_dev;	/* current serial device */
 	struct arch_global_data arch;	/* architecture-specific data */
 } gd_t;

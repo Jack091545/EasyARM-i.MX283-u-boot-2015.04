@@ -268,23 +268,11 @@ static int zero_global_data(void)
 	return 0;
 }
 
+
+/* ÉèÖÃmonitor³¤¶È */
 static int setup_mon_len(void)
 {
-#if defined(__ARM__) || defined(__MICROBLAZE__)
-	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 	gd->mon_len = (ulong)&__bss_end - (ulong)_start;
-#elif defined(CONFIG_SANDBOX)
-	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
-	gd->mon_len = (ulong)&_end - (ulong)_init;
-#elif defined(CONFIG_BLACKFIN) || defined(CONFIG_NIOS2)
-	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
-	gd->mon_len = CONFIG_SYS_MONITOR_LEN;
-#else
-	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
-
-	/* TODO: use (ulong)&__bss_end - (ulong)&__text_start; ? */
-	gd->mon_len = (ulong)&__bss_end - CONFIG_SYS_MONITOR_BASE;
-#endif
 	return 0;
 }
 
@@ -785,8 +773,6 @@ static int setup_reloc(void)
 
 static int jump_to_copy(void)
 {
-	printf("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
-
 	/*
 	 * x86 is special, but in a nice way. It uses a trampoline which
 	 * enables the dcache if possible.
@@ -819,6 +805,7 @@ static int mark_bootstage(void)
 	return 0;
 }
 
+__maybe_unused
 static int initf_malloc(void)
 {
 #ifdef CONFIG_SYS_MALLOC_F_LEN
@@ -852,7 +839,6 @@ __weak int reserve_arch(void)
 static init_fnc_t init_sequence_f[] = {
 	setup_mon_len,
 	setup_fdt,
-	initf_malloc,
 	arch_cpu_init,		/* basic arch cpu dependent setup */
 	mark_bootstage,
 	initf_dm,
