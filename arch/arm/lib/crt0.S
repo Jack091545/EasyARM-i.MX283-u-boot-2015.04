@@ -61,9 +61,11 @@ ENTRY(_main)
  * Set up initial C runtime environment and call board_init_f(0).
  */
 
+
 #if defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_STACK)
 	ldr	sp, =(CONFIG_SPL_STACK)
 #else
+	/* 从这里开始执行 CONFIG_SYS_INIT_SP_ADDR = 0x0001ff50 */
 	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)
 #endif
 	bic	sp, sp, #7	/* 8-byte alignment for ABI compliance */
@@ -151,5 +153,17 @@ clbss_l:cmp	r0, r1			/* while not at end of BSS */
 
 	/* we should not return here. */
 #endif
+
+
+
+crt0_printf:
+	push {lr}
+	ldr r0, =crt0_pstr
+	ldr r1, =(CONFIG_SYS_INIT_SP_ADDR)
+	bl printf
+	pop {pc}
+
+crt0_pstr:
+	.asciz "sp = %08x\n"
 
 ENDPROC(_main)

@@ -25,6 +25,7 @@ int arch_reserve_stacks(void)
 	gd->irq_sp = gd->start_addr_sp;
 
 # if !defined(CONFIG_ARM64)
+
 #  ifdef CONFIG_USE_IRQ
 	gd->start_addr_sp -= (CONFIG_STACKSIZE_IRQ + CONFIG_STACKSIZE_FIQ);
 	debug("Reserving %zu Bytes for IRQ stack at: %08lx\n",

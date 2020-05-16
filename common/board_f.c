@@ -337,6 +337,7 @@ static int setup_ram_buf(void)
 }
 #endif
 
+__maybe_unused
 static int setup_fdt(void)
 {
 #ifdef CONFIG_OF_CONTROL
@@ -453,6 +454,13 @@ static int reserve_round_4k(void)
 	return 0;
 }
 
+
+
+
+
+
+
+
 #if !(defined(CONFIG_SYS_ICACHE_OFF) && defined(CONFIG_SYS_DCACHE_OFF)) && \
 		defined(CONFIG_ARM)
 static int reserve_mmu(void)
@@ -487,6 +495,9 @@ static int reserve_lcd(void)
 }
 #endif /* CONFIG_LCD */
 
+
+
+__maybe_unused
 static int reserve_trace(void)
 {
 #ifdef CONFIG_TRACE
@@ -514,6 +525,10 @@ static int reserve_video(void)
 }
 #endif
 
+
+
+
+
 static int reserve_uboot(void)
 {
 	/*
@@ -522,12 +537,8 @@ static int reserve_uboot(void)
 	 */
 	gd->relocaddr -= gd->mon_len;
 	gd->relocaddr &= ~(4096 - 1);
-#ifdef CONFIG_E500
-	/* round down to next 64 kB limit so that IVPR stays aligned */
-	gd->relocaddr &= ~(65536 - 1);
-#endif
 
-	debug("Reserving %ldk for U-Boot at: %08lx\n", gd->mon_len >> 10,
+	debug("Reserving %ld bytes = %ldk for U-Boot at: %08lx\n", gd->mon_len,gd->mon_len >> 10,
 	      gd->relocaddr);
 
 	gd->start_addr_sp = gd->relocaddr;
@@ -535,22 +546,33 @@ static int reserve_uboot(void)
 	return 0;
 }
 
+
+
+
 #ifndef CONFIG_SPL_BUILD
 /* reserve memory for malloc() area */
 static int reserve_malloc(void)
 {
-
+	
 	gd->start_addr_sp = gd->start_addr_sp - TOTAL_MALLOC_LEN;
-	debug("Reserving %dk for malloc() at: %08lx\n",
-			TOTAL_MALLOC_LEN >> 10, gd->start_addr_sp);
+	debug("Reserving %08x bytes %dk for malloc() at: %08lx\n", \
+		TOTAL_MALLOC_LEN,\
+		TOTAL_MALLOC_LEN >> 10,\
+		gd->start_addr_sp);
 	return 0;
 }
+
+
+
+
+
 
 /* (permanently) allocate a Board Info struct */
 static int reserve_board(void)
 {
 
 	if (!gd->bd) {
+		
 		gd->start_addr_sp -= sizeof(bd_t);
 		gd->bd = (bd_t *)map_sysmem(gd->start_addr_sp, sizeof(bd_t));
 		memset(gd->bd, '\0', sizeof(bd_t));
@@ -569,6 +591,7 @@ static int setup_machine(void)
 	return 0;
 }
 
+
 static int reserve_global_data(void)
 {
 	gd->start_addr_sp -= sizeof(gd_t);
@@ -578,8 +601,14 @@ static int reserve_global_data(void)
 	return 0;
 }
 
+
+
+
+
+__maybe_unused
 static int reserve_fdt(void)
 {
+	
 	/*
 	 * If the device tree is sitting immediate above our image then we
 	 * must relocate it. If it is embedded in the data section, then it
@@ -601,6 +630,7 @@ int arch_reserve_stacks(void)
 {
 	return 0;
 }
+
 
 static int reserve_stacks(void)
 {
@@ -735,6 +765,7 @@ static int setup_dram_config(void)
 	return 0;
 }
 
+__maybe_unused
 static int reloc_fdt(void)
 {
 
@@ -817,11 +848,11 @@ static int initf_malloc(void)
 	return 0;
 }
 
+__maybe_unused
 static int initf_dm(void)
 {
 #if defined(CONFIG_DM) && defined(CONFIG_SYS_MALLOC_F_LEN)
 	int ret;
-
 	ret = dm_init_and_scan(true);
 	if (ret)
 		return ret;
@@ -836,12 +867,29 @@ __weak int reserve_arch(void)
 	return 0;
 }
 
+
+
+
+/* 			memory map 							*/
+/* ---------0x48000000 = ram_top -------------- */
+/* ---------0x47FF4000 ------------------------ */
+/*			TLB	= 4 * 4096	 					*/
+/* ---------0x47FF0000 = arch.tlb_addr --------	*/
+/* 			u-boot = 780364(maybe not) 			*/
+/* ---------0x47F31000 = relocaddr ------------ */
+/* 			malloc + env size = 0x404000 		*/
+/* ---------0x47B2D000 ------------------------	*/
+/* 			board info = 80						*/
+/* ---------0x47b2cfb0 ------------------------ */
+/* 			global data = 176					*/			
+/* ---------0x47b2cf00 ------------------------ */
+/* ---------0x47B2CEF0 = irq_sp --------------- */
+/* ---------0x47B2CEE0 = start_addr_sp -------- */
+
 static init_fnc_t init_sequence_f[] = {
 	setup_mon_len,
-	setup_fdt,
 	arch_cpu_init,		/* basic arch cpu dependent setup */
 	mark_bootstage,
-	initf_dm,
 	board_early_init_f,
 	timer_init,			/* initialize timer */
 	env_init,			/* initialize environment */
@@ -868,19 +916,16 @@ static init_fnc_t init_sequence_f[] = {
 	setup_dest_addr,
 	reserve_round_4k,
 	reserve_mmu,
-	reserve_trace,
 	reserve_uboot,
 	reserve_malloc,
 	reserve_board,
 	setup_machine,
 	reserve_global_data,
-	reserve_fdt,
 	reserve_arch,
 	reserve_stacks,
 	setup_dram_config,
 	show_dram_config,
 	display_new_sp,
-	reloc_fdt,
 	setup_reloc,
 	NULL,
 };
@@ -891,11 +936,20 @@ void board_init_f(ulong boot_flags)
 	gd->have_console = 0;
 	if (initcall_run_list(init_sequence_f))
 		hang();
-
+	
 #if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)
 	/* NOTREACHED - jump_to_copy() does not return */
 	hang();
 #endif
 }
+
+
+
+
+
+
+
+
+
 
 

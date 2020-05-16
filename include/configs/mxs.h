@@ -60,11 +60,8 @@
 
 /* OCRAM at 0x0 ; 32kB on MX23 ; 128kB on MX28 */
 #define CONFIG_SYS_INIT_RAM_ADDR	0x00000000
-#if defined(CONFIG_MX23)
-#define CONFIG_SYS_INIT_RAM_SIZE	(32 * 1024)
-#elif defined(CONFIG_MX28)
 #define CONFIG_SYS_INIT_RAM_SIZE	(128 * 1024)
-#endif
+
 
 /* Point initial SP in SRAM so SPL can use it too. */
 #define CONFIG_SYS_INIT_SP_OFFSET \
@@ -84,8 +81,7 @@
  * As for the SPL, we must avoid the first 4 KiB as well, but we load the
  * IVT and CST to 0x8000, so we don't need to waste the subsequent 4 KiB.
  */
-#define CONFIG_SYS_TEXT_BASE		0x40002000
-#define CONFIG_SPL_TEXT_BASE		0x00001000
+#define CONFIG_SYS_TEXT_BASE		0x40000000
 
 /* U-Boot general configuration */
 #define CONFIG_SYS_LONGHELP
