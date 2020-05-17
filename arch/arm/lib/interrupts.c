@@ -29,6 +29,7 @@ DECLARE_GLOBAL_DATA_PTR;
 int interrupt_init (void)
 {
 	unsigned long cpsr;
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 	/*
 	 * setup up stacks if necessary
@@ -96,6 +97,8 @@ int disable_interrupts (void)
 #else
 int interrupt_init (void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/*
 	 * setup up stacks if necessary
 	 */

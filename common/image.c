@@ -484,6 +484,7 @@ phys_size_t getenv_bootm_mapsize(void)
 #endif
 }
 
+
 void memmove_wd(void *to, void *from, size_t len, ulong chunksz)
 {
 	if (to == from)

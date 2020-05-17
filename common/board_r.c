@@ -79,6 +79,8 @@ __weak void cpu_secondary_init_r(void)
 
 static int initr_secondary_cpu(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/*
 	 * after non-volatile devices & environment is setup and cpu code have
 	 * another round to deal with any initialization that might require
@@ -94,6 +96,8 @@ static int initr_secondary_cpu(void)
 static int initr_trace(void)
 {
 #ifdef CONFIG_TRACE
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	trace_init(gd->trace_buff, CONFIG_TRACE_BUFFER_SIZE);
 #endif
 
@@ -102,6 +106,8 @@ static int initr_trace(void)
 
 static int initr_reloc(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* tell others: relocation done */
 	gd->flags |= GD_FLG_RELOC | GD_FLG_FULL_MALLOC_INIT;
 	bootstage_mark_name(BOOTSTAGE_ID_START_UBOOT_R, "board_init_r");
@@ -116,6 +122,8 @@ static int initr_reloc(void)
  */
 static int initr_caches(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* Enable caches */
 	enable_caches();
 	return 0;
@@ -130,11 +138,17 @@ __weak int fixup_cpu(void)
 static int initr_reloc_global_data(void)
 {
 #ifdef __ARM__
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	monitor_flash_len = _end - __image_copy_start;
 #elif !defined(CONFIG_SANDBOX) && !defined(CONFIG_NIOS2)
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	monitor_flash_len = (ulong)&__init_end - gd->relocaddr;
 #endif
 #if defined(CONFIG_MPC85xx) || defined(CONFIG_MPC86xx)
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/*
 	 * The gd->cpu pointer is set to an address in flash before relocation.
 	 * We need to update it to point to the same CPU entry in RAM.
@@ -149,6 +163,8 @@ static int initr_reloc_global_data(void)
 	fixup_cpu();
 #endif
 #ifdef CONFIG_SYS_EXTRA_ENV_RELOC
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/*
 	 * Some systems need to relocate the env_addr pointer early because the
 	 * location it points to will get invalidated before env_relocate is
@@ -163,6 +179,8 @@ static int initr_reloc_global_data(void)
 
 static int initr_serial(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	serial_initialize();
 	return 0;
 }
@@ -174,8 +192,12 @@ static int initr_trap(void)
 	 * Setup trap handlers
 	 */
 #if defined(CONFIG_PPC)
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	trap_init(gd->relocaddr);
 #else
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	trap_init(CONFIG_SYS_SDRAM_BASE);
 #endif
 	return 0;
@@ -185,6 +207,8 @@ static int initr_trap(void)
 #ifdef CONFIG_ADDR_MAP
 static int initr_addr_map(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	init_addr_map();
 
 	return 0;
@@ -199,6 +223,8 @@ unsigned long logbuffer_base(void)
 
 static int initr_logbuffer(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	logbuff_init_ptrs();
 	return 0;
 }
@@ -207,6 +233,8 @@ static int initr_logbuffer(void)
 #ifdef CONFIG_POST
 static int initr_post_backlog(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	post_output_backlog();
 	return 0;
 }
@@ -215,6 +243,8 @@ static int initr_post_backlog(void)
 #ifdef CONFIG_SYS_DELAYED_ICACHE
 static int initr_icache_enable(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	return 0;
 }
 #endif
@@ -222,6 +252,8 @@ static int initr_icache_enable(void)
 #if defined(CONFIG_SYS_INIT_RAM_LOCK) && defined(CONFIG_E500)
 static int initr_unlock_ram_in_cache(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	unlock_ram_in_cache();	/* it's time to unlock D-cache in e500 */
 	return 0;
 }
@@ -230,6 +262,8 @@ static int initr_unlock_ram_in_cache(void)
 #ifdef CONFIG_PCI
 static int initr_pci(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	pci_init();
 
 	return 0;
@@ -239,6 +273,8 @@ static int initr_pci(void)
 #ifdef CONFIG_WINBOND_83C553
 static int initr_w83c553f(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/*
 	 * Initialise the ISA bridge
 	 */
@@ -250,6 +286,8 @@ static int initr_w83c553f(void)
 static int initr_barrier(void)
 {
 #ifdef CONFIG_PPC
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* TODO: Can we not use dmb() macros for this? */
 	asm("sync ; isync");
 #endif
@@ -261,9 +299,14 @@ static int initr_malloc(void)
 	ulong malloc_start;
 
 #ifdef CONFIG_SYS_MALLOC_F_LEN
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
+
 	debug("Pre-reloc malloc() used %#lx bytes (%ld KB)\n", gd->malloc_ptr,
 	      gd->malloc_ptr / 1024);
 #endif
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* The malloc area is immediately below the monitor copy in DRAM */
 	malloc_start = gd->relocaddr - TOTAL_MALLOC_LEN;
 	mem_malloc_init((ulong)map_sysmem(malloc_start, TOTAL_MALLOC_LEN),
@@ -274,6 +317,8 @@ static int initr_malloc(void)
 #ifdef CONFIG_SYS_NONCACHED_MEMORY
 static int initr_noncached(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	noncached_init();
 	return 0;
 }
@@ -282,6 +327,8 @@ static int initr_noncached(void)
 #ifdef CONFIG_DM
 static int initr_dm(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* Save the pre-reloc driver model and start a new one */
 	gd->dm_root_f = gd->dm_root;
 	gd->dm_root = NULL;
@@ -291,11 +338,15 @@ static int initr_dm(void)
 
 __weak int power_init_board(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	return 0;
 }
 
 static int initr_announce(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	debug("Now running in RAM - U-Boot at: %08lx\n", gd->relocaddr);
 	return 0;
 }
@@ -303,6 +354,8 @@ static int initr_announce(void)
 #ifdef CONFIG_NEEDS_MANUAL_RELOC
 static int initr_manual_reloc_cmdtable(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	fixup_cmdtable(ll_entry_start(cmd_tbl_t, cmd),
 		       ll_entry_count(cmd_tbl_t, cmd));
 	return 0;
@@ -312,6 +365,8 @@ static int initr_manual_reloc_cmdtable(void)
 #if !defined(CONFIG_SYS_NO_FLASH)
 static int initr_flash(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	ulong flash_size = 0;
 	bd_t *bd = gd->bd;
 
@@ -365,11 +420,18 @@ static int initr_spi(void)
 {
 	/* PPC does this here */
 #ifdef CONFIG_SPI
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 #if !defined(CONFIG_ENV_IS_IN_EEPROM)
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 	spi_init_f();
 #endif
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	spi_init_r();
 #endif
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	return 0;
 }
 #endif
@@ -378,6 +440,8 @@ static int initr_spi(void)
 /* go init the NAND */
 static int initr_nand(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	puts("NAND:  ");
 	nand_init();
 	return 0;
@@ -388,6 +452,8 @@ static int initr_nand(void)
 /* go init the NAND */
 static int initr_onenand(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	puts("NAND:  ");
 	onenand_init();
 	return 0;
@@ -397,6 +463,8 @@ static int initr_onenand(void)
 #ifdef CONFIG_GENERIC_MMC
 static int initr_mmc(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	puts("MMC:   ");
 	mmc_initialize(gd->bd);
 	return 0;
@@ -406,6 +474,8 @@ static int initr_mmc(void)
 #ifdef CONFIG_HAS_DATAFLASH
 static int initr_dataflash(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	AT91F_DataflashInit();
 	dataflash_print_info();
 	return 0;
@@ -436,6 +506,8 @@ static int should_load_env(void)
 
 static int initr_env(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* initialize environment */
 	if (should_load_env())
 		env_relocate();
@@ -447,6 +519,8 @@ static int initr_env(void)
 #if defined(CONFIG_SYS_EXTBDINFO)
 #if defined(CONFIG_405GP) || defined(CONFIG_405EP)
 #if defined(CONFIG_I2CFAST)
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/*
 	 * set bi_iic_fast for linux taking environment variable
 	 * "i2cfast" into account
@@ -468,6 +542,8 @@ static int initr_env(void)
 #ifdef CONFIG_SYS_BOOTPARAMS_LEN
 static int initr_malloc_bootparams(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	gd->bd->bi_boot_params = (ulong)malloc(CONFIG_SYS_BOOTPARAMS_LEN);
 	if (!gd->bd->bi_boot_params) {
 		puts("WARNING: Cannot allocate space for boot parameters\n");
@@ -483,6 +559,8 @@ extern void sc3_read_eeprom(void);
 
 static int initr_sc3_read_eeprom(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	sc3_read_eeprom();
 	return 0;
 }
@@ -490,6 +568,8 @@ static int initr_sc3_read_eeprom(void)
 
 static int initr_jumptable(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	jumptable_init();
 	return 0;
 }
@@ -497,6 +577,8 @@ static int initr_jumptable(void)
 #if defined(CONFIG_API)
 static int initr_api(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* Initialize API */
 	api_init();
 	return 0;
@@ -507,6 +589,8 @@ static int initr_api(void)
 #if defined(CONFIG_ARM) || defined(CONFIG_AVR32)
 static int initr_enable_interrupts(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	enable_interrupts();
 	return 0;
 }
@@ -516,6 +600,7 @@ static int initr_enable_interrupts(void)
 static int initr_ethaddr(void)
 {
 	bd_t *bd = gd->bd;
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 	/* kept around for legacy kernels only ... ignore the next section */
 	eth_getenv_enetaddr("ethaddr", bd->bi_enetaddr);
@@ -541,6 +626,8 @@ static int initr_ethaddr(void)
 #ifdef CONFIG_CMD_KGDB
 static int initr_kgdb(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	puts("KGDB:  ");
 	kgdb_init();
 	return 0;
@@ -550,6 +637,8 @@ static int initr_kgdb(void)
 #if defined(CONFIG_STATUS_LED) && defined(STATUS_LED_BOOT)
 static int initr_status_led(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	status_led_set(STATUS_LED_BOOT, STATUS_LED_BLINKING);
 
 	return 0;
@@ -559,6 +648,8 @@ static int initr_status_led(void)
 #if defined(CONFIG_CMD_SCSI)
 static int initr_scsi(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	puts("SCSI:  ");
 	scsi_init();
 
@@ -569,6 +660,8 @@ static int initr_scsi(void)
 #if defined(CONFIG_CMD_DOC)
 static int initr_doc(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	puts("DOC:   ");
 	doc_init();
 	return 0;
@@ -578,6 +671,8 @@ static int initr_doc(void)
 #ifdef CONFIG_BITBANGMII
 static int initr_bbmii(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	bb_miiphy_init();
 	return 0;
 }
@@ -586,6 +681,8 @@ static int initr_bbmii(void)
 #ifdef CONFIG_CMD_NET
 static int initr_net(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	puts("Net:   ");
 	eth_initialize(gd->bd);
 #if defined(CONFIG_RESET_PHY_R)
@@ -599,6 +696,8 @@ static int initr_net(void)
 #ifdef CONFIG_POST
 static int initr_post(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	post_run(NULL, POST_RAM | post_bootmode_get(0));
 	return 0;
 }
@@ -607,6 +706,8 @@ static int initr_post(void)
 #if defined(CONFIG_CMD_PCMCIA) && !defined(CONFIG_CMD_IDE)
 static int initr_pcmcia(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	puts("PCMCIA:");
 	pcmcia_init();
 	return 0;
@@ -616,6 +717,8 @@ static int initr_pcmcia(void)
 #if defined(CONFIG_CMD_IDE)
 static int initr_ide(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 #ifdef	CONFIG_IDE_8xx_PCCARD
 	puts("PCMCIA:");
 #else
@@ -641,6 +744,9 @@ int initr_mem(void)
 	ulong pram = 0;
 	char memsz[32];
 
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
+
 # ifdef CONFIG_PRAM
 	pram = getenv_ulong("pram", 10, CONFIG_PRAM);
 # endif
@@ -658,6 +764,8 @@ int initr_mem(void)
 #ifdef CONFIG_CMD_BEDBUG
 static int initr_bedbug(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	bedbug_init();
 
 	return 0;
@@ -667,6 +775,9 @@ static int initr_bedbug(void)
 #ifdef CONFIG_PS2KBD
 static int initr_kbd(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
+
 	puts("PS/2:  ");
 	kbd_init();
 	return 0;
@@ -683,6 +794,7 @@ static int run_main_loop(void)
 		main_loop();
 	return 0;
 }
+
 
 /*
  * Over time we hope to remove these functions with code fragments and
@@ -722,9 +834,6 @@ init_fnc_t init_sequence_r[] = {
 	 * davinci SOC's is added. Remove this check once all the board
 	 * implement this.
 	 */
-#ifdef CONFIG_CLOCKS
-	set_cpu_clk_info, /* Setup clock information */
-#endif
 	stdio_init_tables,
 	initr_serial,
 	initr_announce,

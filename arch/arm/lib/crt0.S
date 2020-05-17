@@ -62,20 +62,37 @@ ENTRY(_main)
  */
 
 
+/* 			memory map 							*/
+/* ---------0x0001FFFF ------------------------ */
+/*			GD_SIZE = 176(maybe not used)		*/
+/* ---------0x0001FF50 ------------------------ */
+/*			GD_SIZE = 176	 					*/
+/* ---------0x0001FEA0 sp --------------------- */
+
+
+
 #if defined(CONFIG_SPL_BUILD) && defined(CONFIG_SPL_STACK)
 	ldr	sp, =(CONFIG_SPL_STACK)
 #else
 	/* 从这里开始执行 CONFIG_SYS_INIT_SP_ADDR = 0x0001ff50 */
 	ldr	sp, =(CONFIG_SYS_INIT_SP_ADDR)
 #endif
+	/* sp &= ~(0x07) */
 	bic	sp, sp, #7	/* 8-byte alignment for ABI compliance */
+	/* r2 = sp = 0x0001ff50 */
 	mov	r2, sp
+	/* sp = sp - GD_SIZE(176) = 0x0001FEA0 */
 	sub	sp, sp, #GD_SIZE	/* allocate one GD above SP */
+	/* sp &= ~(0x07), sp = 0x0001FEA0 */
 	bic	sp, sp, #7	/* 8-byte alignment for ABI compliance */
+	/* r9 = sp = 0x0001FEA0 */
 	mov	r9, sp		/* GD is above SP */
+	/* r1 = sp = 0x0001FEA0 */
 	mov	r1, sp
+	/* r0 = 0 */
 	mov	r0, #0
 clr_gd:
+	/* r1 = 0x0001FEA0, r2 = 0x0001ff50  */
 	cmp	r1, r2			/* while not at end of GD */
 	strlo	r0, [r1]		/* clear 32-bit GD word */
 	addlo	r1, r1, #4		/* move to next */
@@ -95,14 +112,39 @@ clr_gd:
  * 'here' but relocated.
  */
 
-	ldr	sp, [r9, #GD_START_ADDR_SP]	/* sp = gd->start_addr_sp */
-	bic	sp, sp, #7	/* 8-byte alignment for ABI compliance */
-	ldr	r9, [r9, #GD_BD]		/* r9 = gd->bd */
-	sub	r9, r9, #GD_SIZE		/* new GD is below bd */
+	/* 			memory map 							*/
+	/* ---------0x48000000 = ram_top -------------- */
+	/* ---------0x47FF4000 ------------------------ */
+	/*			TLB	= 4 * 4096	 					*/
+	/* ---------0x47ff0000 = arch.tlb_addr --------	*/
+	/* 			u-boot = 780364(maybe not) 			*/
+	/* ---------0x47F39000 = relocaddr ------------ */
+	/* 			malloc + env size = 0x404000 		*/
+	/* ---------0x47B35000 ------------------------	*/
+	/* 			board info = 80						*/
+	/* ---------0x47B34FB0 ------------------------ */
+	/* 			global data = 176					*/			
+	/* ---------0x47B34F00 ------------------------ */
+	/* ---------0x47B34EF0 = irq_sp --------------- */
+	/* ---------0x47B34EE0 = start_addr_sp -------- */
+	/*			stack								*/
 
+	/* sp = gd->start_addr_sp = 0x47B34EE0 */
+	ldr	sp, [r9, #GD_START_ADDR_SP]	
+	/* sp = = 0x47B34EE0 */
+	bic	sp, sp, #7	/* 8-byte alignment for ABI compliance */
+
+	/* gd = r9 = gd->bd = 0x47B34FB0 */
+	ldr	r9, [r9, #GD_BD]
+	/* gd = r9 = 0x47B34F00 */
+	sub	r9, r9, #GD_SIZE		/* new GD is below bd, r9 = 0x47b34f00 */
+	
 	adr	lr, here
+	/* r0 = 7F39000 */
 	ldr	r0, [r9, #GD_RELOC_OFF]		/* r0 = gd->reloc_off */
+	/* here地址 + 0x7F3900 */
 	add	lr, lr, r0
+	/* R0 = 0x47F39000 */
 	ldr	r0, [r9, #GD_RELOCADDR]		/* r0 = gd->relocaddr */
 	b	relocate_code
 here:
@@ -155,15 +197,32 @@ clbss_l:cmp	r0, r1			/* while not at end of BSS */
 #endif
 
 
+#if 0
+test_hang:
+	b test_hang
 
-crt0_printf:
+
+print_r9:
 	push {lr}
-	ldr r0, =crt0_pstr
-	ldr r1, =(CONFIG_SYS_INIT_SP_ADDR)
+	ldr r0, =pstr_r9
+	mov r1, r9
 	bl printf
 	pop {pc}
 
-crt0_pstr:
-	.asciz "sp = %08x\n"
+
+
+print_r9_content:
+	push {lr}
+	ldr r0, =pstr_r9_content
+	ldr r1, [r9, #GD_BD]
+	bl printf
+	pop {pc}
+
+pstr_r9:
+	.asciz "r9 = %08x\n"
+
+pstr_r9_content:
+	.asciz "[r9] = %08x\n"
+#endif
 
 ENDPROC(_main)

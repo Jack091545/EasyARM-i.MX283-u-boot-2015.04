@@ -64,15 +64,19 @@ ENDPROC(relocate_vectors)
  */
 
 ENTRY(relocate_code)
+	/* r1 = 0x40000000 */
 	ldr	r1, =__image_copy_start	/* r1 <- SRC &__image_copy_start */
+	/* r0 = 0x47F39000 */
+	/* r4 = 0x07F39000 */
 	subs	r4, r0, r1		/* r4 <- relocation offset */
 	beq	relocate_done		/* skip relocation */
+	/*  */
 	ldr	r2, =__image_copy_end	/* r2 <- SRC &__image_copy_end */
 
 copy_loop:
 	ldmia	r1!, {r10-r11}		/* copy from source address [r1]    */
 	stmia	r0!, {r10-r11}		/* copy to   target address [r0]    */
-	cmp	r1, r2			/* until source end address [r2]    */
+	cmp	r1, r2					/* until source end address [r2]    */
 	blo	copy_loop
 
 	/*
@@ -113,5 +117,7 @@ relocate_done:
 #else
 	bx	lr
 #endif
+
+
 
 ENDPROC(relocate_code)

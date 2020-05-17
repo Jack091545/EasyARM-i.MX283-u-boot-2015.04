@@ -88,6 +88,8 @@ int dram_init(void)
 
 int board_init(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* Adress of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM_1 + 0x100;
 

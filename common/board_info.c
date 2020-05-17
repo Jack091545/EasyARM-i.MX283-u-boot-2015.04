@@ -19,7 +19,7 @@ int __weak checkboard(void)
  */
 int show_board_info(void)
 {
-	printf("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 #ifdef CONFIG_OF_CONTROL
 	DECLARE_GLOBAL_DATA_PTR;

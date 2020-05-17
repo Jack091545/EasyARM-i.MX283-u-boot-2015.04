@@ -337,7 +337,7 @@ int bootm_decomp_image(int comp, ulong load, ulong image_start, int type,
 	case IH_COMP_NONE:
 		if (load == image_start)
 			break;
-		if (image_len <= unc_len)
+		if (image_len <= unc_len) 
 			memmove_wd(load_buf, image_buf, image_len, CHUNKSZ);
 		else
 			ret = 1;
@@ -411,8 +411,11 @@ static int bootm_load_os(bootm_headers_t *images, unsigned long *load_end,
 	void *load_buf, *image_buf;
 	int err;
 
+	debug("%s:%d - %s\n",__FILE__,__LINE__,__FUNCTION__);
+
 	load_buf = map_sysmem(load, 0);
 	image_buf = map_sysmem(os.image_start, image_len);
+	debug("%s:%d - %s\n",__FILE__,__LINE__,__FUNCTION__);
 	err = bootm_decomp_image(os.comp, load, os.image_start, os.type,
 				 load_buf, image_buf, image_len,
 				 CONFIG_SYS_BOOTM_LEN, load_end);
@@ -578,19 +581,27 @@ int do_bootm_states(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[],
 	ulong iflag = 0;
 	int ret = 0, need_boot_fn;
 
+
+
 	images->state |= states;
 
 	/*
 	 * Work through the states and see how far we get. We stop on
 	 * any error.
 	 */
-	if (states & BOOTM_STATE_START)
-		ret = bootm_start(cmdtp, flag, argc, argv);
+	if (states & BOOTM_STATE_START) {
+		debug("%s:%d - %s\n",__FILE__,__LINE__,__FUNCTION__);
 
-	if (!ret && (states & BOOTM_STATE_FINDOS))
+		ret = bootm_start(cmdtp, flag, argc, argv);
+	}
+
+	if (!ret && (states & BOOTM_STATE_FINDOS)) {
+		debug("%s:%d - %s\n",__FILE__,__LINE__,__FUNCTION__);
 		ret = bootm_find_os(cmdtp, flag, argc, argv);
+	}
 
 	if (!ret && (states & BOOTM_STATE_FINDOTHER)) {
+		debug("%s:%d - %s\n",__FILE__,__LINE__,__FUNCTION__);
 		ret = bootm_find_other(cmdtp, flag, argc, argv);
 		argc = 0;	/* consume the args */
 	}
@@ -598,9 +609,13 @@ int do_bootm_states(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[],
 	/* Load the OS */
 	if (!ret && (states & BOOTM_STATE_LOADOS)) {
 		ulong load_end;
+		debug("%s:%d - %s\n",__FILE__,__LINE__,__FUNCTION__);
+
 
 		iflag = bootm_disable_interrupts();
+		debug("%s:%d - %s\n",__FILE__,__LINE__,__FUNCTION__);
 		ret = bootm_load_os(images, &load_end, 0);
+
 		if (ret == 0)
 			lmb_reserve(&images->lmb, images->os.load,
 				    (load_end - images->os.load));

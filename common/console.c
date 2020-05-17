@@ -753,6 +753,7 @@ int console_init_r(void)
 #ifdef CONFIG_CONSOLE_MUX
 	int iomux_err = 0;
 #endif
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 	/* set default handlers at first */
 	gd->jt->getc  = serial_getc;
@@ -840,6 +841,8 @@ int console_init_r(void)
 	struct list_head *list = stdio_get_list();
 	struct list_head *pos;
 	struct stdio_dev *dev;
+
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 #ifdef CONFIG_SPLASH_SCREEN
 	/*

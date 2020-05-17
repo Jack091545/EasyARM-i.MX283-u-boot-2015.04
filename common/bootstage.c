@@ -46,6 +46,7 @@ struct bootstage_hdr {
 int bootstage_relocate(void)
 {
 	int i;
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 	/*
 	 * Duplicate all strings.  They may point to an old location in the

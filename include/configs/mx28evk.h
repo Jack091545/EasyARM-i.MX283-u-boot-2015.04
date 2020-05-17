@@ -118,11 +118,13 @@
 /* Boot Linux */
 #define CONFIG_BOOTDELAY	15
 #define CONFIG_BOOTFILE		"uImage"
-#define CONFIG_LOADADDR		0x42000000
+#define CONFIG_LOADADDR		0x41600000
 #define CONFIG_SYS_LOAD_ADDR	CONFIG_LOADADDR
 
 /* Extra Environment */
 #define CONFIG_EXTRA_ENV_SETTINGS \
+	"kerneladdr=0x00200000\0" \
+	"kernelsize=0x00300000\0" \
 	"ubifs_file=filesystem.ubifs\0" \
 	"update_nand_full_filename=u-boot.nand\0" \
 	"update_nand_firmware_filename=u-boot.sb\0"	\
@@ -185,22 +187,9 @@
 		"ubi part filesystem; " \
 		"ubi create filesystem; " \
 		"ubi write ${loadaddr} filesystem ${filesize}\0" \
-	"nandargs=setenv bootargs console=${console_mainline},${baudrate} " \
-		"rootfstype=ubifs ubi.mtd=6 root=ubi0_0 ${mtdparts}\0" \
+	"nandargs=setenv bootargs gpmi=g console=ttyAM0,115200n8 ubi.mtd=1 root=ubi0:rootfs rootfstype=ubifs fec_mac=ethact\0" \
 	"nandboot="		/* Boot from NAND */ \
-		"mtdparts default; " \
-		"run nandargs; " \
-		"nand read ${loadaddr} kernel 0x00400000; " \
-		"if test ${boot_fdt} = yes; then " \
-			"nand read ${fdt_addr} fdt 0x00080000; " \
-			"bootz ${loadaddr} - ${fdt_addr}; " \
-		"else " \
-			"if test ${boot_fdt} = no; then " \
-				"bootz; " \
-			"else " \
-				"echo \"ERROR: Set boot_fdt to yes or no.\"; " \
-			"fi; " \
-		"fi\0" \
+		"nand read.jffs2 ${loadaddr} ${kerneladdr} ${kernelsize};bootm ${loadaddr}\0" \
 	"update_sd_firmware_filename=u-boot.sd\0" \
 	"update_sd_firmware="		/* Update the SD firmware partition */ \
 		"if mmc rescan ; then "	\
@@ -270,16 +259,7 @@
 		"fi;\0"
 
 #define CONFIG_BOOTCOMMAND \
-	"mmc dev ${mmcdev}; if mmc rescan; then " \
-		"if run loadbootscript; then " \
-			"run bootscript; " \
-		"else " \
-			"if run loadimage; then " \
-				"run mmcboot; " \
-			"else run netboot; " \
-			"fi; " \
-		"fi; " \
-	"else run netboot; fi"
+	"run nandargs;run nandboot"
 
 /* The rest of the configuration is shared */
 #include <configs/mxs.h>

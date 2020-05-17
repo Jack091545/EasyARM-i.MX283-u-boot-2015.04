@@ -251,7 +251,7 @@ static int init_func_i2c(void)
 #if defined(CONFIG_HARD_SPI)
 static int init_func_spi(void)
 {
-	printf("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 	puts("SPI:   ");
 	spi_init();
@@ -779,22 +779,31 @@ static int reloc_fdt(void)
 
 static int setup_reloc(void)
 {
-#ifdef CONFIG_SYS_TEXT_BASE
+	char *image_copy_start = __image_copy_start;
+	char *image_copy_end = __image_copy_end;
+	
+	char *dyn_start = __rel_dyn_start;
+	char *dyn_end = __rel_dyn_end;
+
+	char *bss_start = __bss_start;
+	char *bss_end = __bss_end;
+
 	gd->reloc_off = gd->relocaddr - CONFIG_SYS_TEXT_BASE;
-#ifdef CONFIG_M68K
-	/*
-	 * On all ColdFire arch cpu, monitor code starts always
-	 * just after the default vector table location, so at 0x400
-	 */
-	gd->reloc_off = gd->relocaddr - (CONFIG_SYS_TEXT_BASE + 0x400);
-#endif
-#endif
+
 	memcpy(gd->new_gd, (char *)gd, sizeof(gd_t));
 
 	debug("Relocation Offset is: %08lx\n", gd->reloc_off);
 	debug("Relocating to %08lx, new gd at %08lx, sp at %08lx\n",
 	      gd->relocaddr, (ulong)map_to_sysmem(gd->new_gd),
 	      gd->start_addr_sp);
+	debug("image length %08lx\n", gd->mon_len);
+	debug("image start at %08x, image end at %08x\n",
+	      (unsigned int)image_copy_start, (unsigned int)image_copy_end);
+	debug("dyn start at %08x, dyn end at %08x\n",
+	      (unsigned int)dyn_start, (unsigned int)dyn_end);
+
+	debug("bss start at %08x, bss end at %08x\n",
+      (unsigned int)bss_start, (unsigned int)bss_end);
 
 	return 0;
 }
@@ -874,17 +883,18 @@ __weak int reserve_arch(void)
 /* ---------0x48000000 = ram_top -------------- */
 /* ---------0x47FF4000 ------------------------ */
 /*			TLB	= 4 * 4096	 					*/
-/* ---------0x47FF0000 = arch.tlb_addr --------	*/
+/* ---------0x47ff0000 = arch.tlb_addr --------	*/
 /* 			u-boot = 780364(maybe not) 			*/
-/* ---------0x47F31000 = relocaddr ------------ */
+/* ---------0x47F39000 = relocaddr ------------ */
 /* 			malloc + env size = 0x404000 		*/
-/* ---------0x47B2D000 ------------------------	*/
+/* ---------0x47B35000 ------------------------	*/
 /* 			board info = 80						*/
-/* ---------0x47b2cfb0 ------------------------ */
+/* ---------0x47B34FB0 ------------------------ */
 /* 			global data = 176					*/			
-/* ---------0x47b2cf00 ------------------------ */
-/* ---------0x47B2CEF0 = irq_sp --------------- */
-/* ---------0x47B2CEE0 = start_addr_sp -------- */
+/* ---------0x47B34F00 ------------------------ */
+/* ---------0x47B34EF0 = irq_sp --------------- */
+/* ---------0x47B34EE0 = start_addr_sp -------- */
+
 
 static init_fnc_t init_sequence_f[] = {
 	setup_mon_len,
@@ -921,7 +931,6 @@ static init_fnc_t init_sequence_f[] = {
 	reserve_board,
 	setup_machine,
 	reserve_global_data,
-	reserve_arch,
 	reserve_stacks,
 	setup_dram_config,
 	show_dram_config,
@@ -930,17 +939,24 @@ static init_fnc_t init_sequence_f[] = {
 	NULL,
 };
 
+
+
+
+
+
+/* 当前的栈指针sp = 0x0001FEA0 */
+/* 当前的gd = 0x0001FEA0 */
+/* ----------------------------- */ /* 0x0001FFFF */
+/*     gd(a block not used)		 */
+/* ----------------------------- */ /* 0x0001FEA0 */
+/*           栈                  */
+/* ----------------------------- */
 void board_init_f(ulong boot_flags)
 {
 	gd->flags = boot_flags;
 	gd->have_console = 0;
 	if (initcall_run_list(init_sequence_f))
 		hang();
-	
-#if !defined(CONFIG_ARM) && !defined(CONFIG_SANDBOX)
-	/* NOTREACHED - jump_to_copy() does not return */
-	hang();
-#endif
 }
 
 

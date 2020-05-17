@@ -226,6 +226,8 @@ int stdio_deregister(const char *devname, int force)
 int stdio_init_tables(void)
 {
 #if defined(CONFIG_NEEDS_MANUAL_RELOC)
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	/* already relocated for current ARM implementation */
 	ulong relocation_offset = gd->reloc_off;
 	int i;
@@ -236,6 +238,7 @@ int stdio_init_tables(void)
 						relocation_offset);
 	}
 #endif /* CONFIG_NEEDS_MANUAL_RELOC */
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 	/* Initialize the list */
 	INIT_LIST_HEAD(&(devs.list));
@@ -246,38 +249,61 @@ int stdio_init_tables(void)
 int stdio_add_devices(void)
 {
 #ifdef CONFIG_SYS_I2C
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	i2c_init_all();
 #else
 #if defined(CONFIG_HARD_I2C)
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	i2c_init (CONFIG_SYS_I2C_SPEED, CONFIG_SYS_I2C_SLAVE);
 #endif
 #endif
 #ifdef CONFIG_LCD
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	drv_lcd_init ();
 #endif
 #if defined(CONFIG_VIDEO) || defined(CONFIG_CFB_CONSOLE)
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	drv_video_init ();
 #endif
 #ifdef CONFIG_KEYBOARD
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	drv_keyboard_init ();
 #endif
 #ifdef CONFIG_LOGBUFFER
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	drv_logbuff_init ();
 #endif
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	drv_system_init ();
 	serial_stdio_init ();
 #ifdef CONFIG_USB_TTY
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	drv_usbtty_init ();
 #endif
 #ifdef CONFIG_NETCONSOLE
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	drv_nc_init ();
 #endif
 #ifdef CONFIG_JTAG_CONSOLE
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	drv_jtag_console_init ();
 #endif
 #ifdef CONFIG_CBMEM_CONSOLE
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	cbmemc_init();
 #endif
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
 
 	return 0;
 }

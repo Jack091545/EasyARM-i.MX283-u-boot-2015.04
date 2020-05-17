@@ -541,13 +541,12 @@ void * memmove(void * dest,const void *src,size_t count)
 		s = (char *) src;
 		while (count--)
 			*tmp++ = *s++;
-		}
-	else {
+	} else {
 		tmp = (char *) dest + count;
 		s = (char *) src + count;
 		while (count--)
 			*--tmp = *--s;
-		}
+	}
 
 	return dest;
 }

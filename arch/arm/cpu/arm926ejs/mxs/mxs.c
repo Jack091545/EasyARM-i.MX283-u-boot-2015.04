@@ -93,6 +93,8 @@ void mx28_fixup_vt(uint32_t start_addr)
 #ifdef	CONFIG_ARCH_MISC_INIT
 int arch_misc_init(void)
 {
+	debug("init func %s at %s:%d\n", __FUNCTION__, __FILE__,__LINE__);
+
 	mx28_fixup_vt(gd->relocaddr);
 	return 0;
 }
